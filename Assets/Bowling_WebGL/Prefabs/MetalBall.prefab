@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8285151947210002525}
   m_Layer: 0
   m_Name: MetalBall
-  m_TagString: Untagged
+  m_TagString: MetalBall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -95,7 +95,7 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4610981139289169744}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6da8e187b83f04db69e380cdd7e9e038, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
