@@ -7,16 +7,40 @@ public class ScoringUI : MonoBehaviour
     public TMP_Text roundScoreText;
     public TMP_Text totalScoreText;
 
-    private void OnEnable ()
+    private void Start()
     {
-       userNameText.text = GameManager.Instance.Username;
-       ScoreManager.Instance.OnScoreChange += UpdateScoreUI;
-       UpdateScoreUI();
+        // Add null checks
+        if (userNameText != null && GameManager.Instance != null)
+        {
+            userNameText.text = GameManager.Instance.Username;
+        }
+
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.OnScoreChange += UpdateScoreUI;
+            UpdateScoreUI();
+        }
+        else
+        {
+            Debug.LogWarning("ScoreManager instance is null!");
+        }
     }
 
-    private void UpdateScoreUI(){
+    private void OnDestroy()
+    {
+        // Clean up the event subscription when the object is destroyed
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.OnScoreChange -= UpdateScoreUI;
+        }
+    }
 
-        roundScoreText.text = $"Round Score: {ScoreManager.Instance.GetRoundScore()}";
-        totalScoreText.text = $"Total Score: {ScoreManager.Instance.GetTotalScore()}";
+    private void UpdateScoreUI()
+    {
+        if (roundScoreText != null && totalScoreText != null && ScoreManager.Instance != null)
+        {
+            roundScoreText.text = $"Round Score: {ScoreManager.Instance.GetRoundScore()}";
+            totalScoreText.text = $"Total Score: {ScoreManager.Instance.GetTotalScore()}";
+        }
     }
 }

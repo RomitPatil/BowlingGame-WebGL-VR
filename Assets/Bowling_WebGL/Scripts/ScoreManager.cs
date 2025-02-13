@@ -3,7 +3,8 @@ using System;
 
 public class ScoreManager : MonoBehaviour
 {
-    public static ScoreManager Instance;
+    public static ScoreManager Instance { get; private set; }
+
     public event Action OnScoreChange;
 
     [SerializeField]
@@ -11,9 +12,17 @@ public class ScoreManager : MonoBehaviour
     [SerializeField]
     private int roundScore;
 
-    private void Awake(){
-
-        if (Instance == null) Instance = this;
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     public void UpdateScore(int points){
