@@ -12,7 +12,7 @@ EditorBuildSettings:
     path: Assets/Bowling_WebGL/Scenes/MainScene.unity
     guid: ec0a38fdb925a42518c14a1c78d102b5
   - enabled: 1
-    path: Assets/Bowling_WebGL/Scenes/GameScene.unity
+    path: Assets/Bowling_WebGL/Scenes/BowlingScene.unity
     guid: 46febcdf6508a4bd5bd461325900d2d7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

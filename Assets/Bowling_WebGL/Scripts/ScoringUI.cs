@@ -3,44 +3,37 @@ using TMPro;
 
 public class ScoringUI : MonoBehaviour
 {
-    public TMP_Text userNameText;
-    public TMP_Text roundScoreText;
-    public TMP_Text totalScoreText;
+    public static ScoringUI Instance;
 
-    private void Start()
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI finalScoreText;
+    [SerializeField] private GameObject finalScorePanel;
+
+    private void Awake()
     {
-        // Add null checks
-        if (userNameText != null && GameManager.Instance != null)
+        if (Instance == null)
         {
-            userNameText.text = GameManager.Instance.Username;
-        }
-
-        if (ScoreManager.Instance != null)
-        {
-            ScoreManager.Instance.OnScoreChange += UpdateScoreUI;
-            UpdateScoreUI();
+            Instance = this;
         }
         else
         {
-            Debug.LogWarning("ScoreManager instance is null!");
+            Destroy(gameObject);
         }
     }
 
-    private void OnDestroy()
+    public void UpdateScoreUI(int totalScore, string userName)
     {
-        // Clean up the event subscription when the object is destroyed
-        if (ScoreManager.Instance != null)
-        {
-            ScoreManager.Instance.OnScoreChange -= UpdateScoreUI;
-        }
+        scoreText.text = $"Player: {userName} | Score: {totalScore}";
     }
 
-    private void UpdateScoreUI()
+    public void ShowFinalScore(int totalScore)
     {
-        if (roundScoreText != null && totalScoreText != null && ScoreManager.Instance != null)
-        {
-            roundScoreText.text = $"Round Score: {ScoreManager.Instance.GetRoundScore()}";
-            totalScoreText.text = $"Total Score: {ScoreManager.Instance.GetTotalScore()}";
-        }
+        finalScorePanel.SetActive(true);
+        finalScoreText.text = $"Final Score: {totalScore}";
+    }
+
+    public void HideFinalScore()
+    {
+        finalScorePanel.SetActive(false);
     }
 }

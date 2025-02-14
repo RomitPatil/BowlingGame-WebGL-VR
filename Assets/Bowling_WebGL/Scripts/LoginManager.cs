@@ -1,27 +1,17 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
 public class LoginManager : MonoBehaviour
 {
     public TMP_InputField usernameInput;
-    public Button startbutton;
 
-    private void Start()
+    public void StartGame()
     {
-        if (startbutton != null)
+        if (!string.IsNullOrEmpty(usernameInput.text))
         {
-            startbutton.onClick.AddListener(OnStartGame);
-        }
-    }
-
-    private void OnStartGame()
-    {
-        if (usernameInput != null && !string.IsNullOrEmpty(usernameInput.text))
-        {
-            GameManager.Instance.SetUsername(usernameInput.text);
-            SceneManager.LoadScene("GameScene");
+            PlayerPrefs.SetString("Username", usernameInput.text);
+            SceneManager.LoadScene("BowlingScene"); // Make sure your main game scene is named correctly
         }
     }
 }

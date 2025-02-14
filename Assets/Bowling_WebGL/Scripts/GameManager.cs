@@ -1,13 +1,20 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public string Username { get; private set; }
+    
+    public TextMeshProUGUI scoreText, roundText, finalScoreText;
+    public GameObject playAgainButton, finalScorePanel;
+    public Transform ballSpawnpoint;
+    public GameObject metalBallPrefab, rubberBallPrefab;
 
-    public TextMeshProUGUI scoreText;
-    private int totalScore;
+    private int totalScore = 0, currentRound = 1, maxRound = 5;
+    private int metalBallCount = 3, rubberBallCount = 2;
+    private GameObject currentBall;
+    private string userName;
 
     private void Awake()
     {
@@ -22,21 +29,95 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetUsername(string username)
+    void Start()
     {
-        Username = username;
+        userName = PlayerPrefs.GetString("Username", "Player");
+        Debug.Log($"Username loaded: {userName}");
+        scoreText.text = $"Player: {userName}";
+        UpdateUI();
+        SpawnBall();
     }
 
-    public void AddScore(string ballType, bool isCollapsed)
+    public void SetUsername(string username)
     {
-        int points = 0;
+        userName = username;
+        PlayerPrefs.SetString("Username", username);
+        PlayerPrefs.Save();
+    }
 
-        if(ballType == "MetalBall"){
-            points = isCollapsed ? 10 : 5;
-        }else if(ballType == "RubberBall"){
-            points = isCollapsed ? 20 : 15;
-        }
-        totalScore += points;
+    public void UpdateScore(string ballType, bool isCollapsed)
+    {
+        int scorePerCollapse = ballType == "MetalBall" ? 10 : 20;
+        int scorePerTouch = ballType == "MetalBall" ? 5 : 15;
+
+        totalScore += isCollapsed ? scorePerCollapse : scorePerTouch;
         scoreText.text = $"Score: {totalScore}";
+    }
+
+    public void NextRound()
+    {
+        Destroy(currentBall);
+        currentRound++;
+
+        if (currentRound > maxRound)
+        {
+            EndGame();
+        }
+        else
+        {
+            SpawnBall();
+            UpdateUI();
+        }
+    }
+
+    void SpawnBall()
+    {
+        if (currentBall != null) Destroy(currentBall);
+
+        if (metalBallCount > 0)
+        {
+            currentBall = Instantiate(metalBallPrefab, ballSpawnpoint.position, Quaternion.identity);
+            metalBallCount--;
+        }
+        else if (rubberBallCount > 0)
+        {
+            currentBall = Instantiate(rubberBallPrefab, ballSpawnpoint.position, Quaternion.identity);
+            rubberBallCount--;
+        }
+        else
+        {
+            Debug.LogWarning("No balls remaining to spawn!");
+        }
+    }
+
+    void UpdateUI()
+    {
+        roundText.text = "Round: " + currentRound + " / " + maxRound;
+    }
+
+    void EndGame()
+    {
+        playAgainButton.SetActive(true);
+        ShowFinalScore();
+    }
+
+    void ShowFinalScore()
+    {
+        finalScorePanel.SetActive(true);
+        finalScoreText.text = $"Final Score: {totalScore}\nPlayer: {userName}";
+    }
+
+    public void RestartGame()
+    {
+        totalScore = 0;
+        currentRound = 1;
+        metalBallCount = 3;
+        rubberBallCount = 2;
+
+        playAgainButton.SetActive(false);
+        finalScorePanel.SetActive(false);
+        
+        SpawnBall();
+        UpdateUI();
     }
 }

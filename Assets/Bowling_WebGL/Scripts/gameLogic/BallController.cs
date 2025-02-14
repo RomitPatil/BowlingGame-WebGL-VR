@@ -2,16 +2,15 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour
 {
-    [SerializeField]
-    public GameObject metalBallPrefab, rubberBallPrefab;
-    
-    [SerializeField]
-    private GameObject currentBall;
+    [SerializeField] private GameObject metalBallPrefab, rubberBallPrefab;
+    [SerializeField] private GameObject currentBall;
     private Rigidbody rb;
 
-    [SerializeField]
-    private float throwForce = 15f;
+    [SerializeField] private float throwForce = 15f;
+    [SerializeField] private float spinForce = 2f; // Add some spin effect
 
+     private AudioSource audioSource; 
+ public AudioClip throwSound; // Assign in Inspector
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)){
@@ -40,6 +39,12 @@ public class BallController : MonoBehaviour
         if (rb != null)
         {
             rb.AddForce(transform.forward * throwForce, ForceMode.Impulse);
+            rb.AddTorque(Vector3.right * spinForce, ForceMode.Impulse); 
+            if (audioSource != null && throwSound != null)
+            {
+                audioSource.PlayOneShot(throwSound);
+            }
         }
     }
+    
 }
