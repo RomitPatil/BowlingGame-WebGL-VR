@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4610981139289169744
+--- !u!1 &8986482861373152357
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5209143235560468072}
-  - component: {fileID: 4605994784846888616}
-  - component: {fileID: 8110632183419151912}
-  - component: {fileID: 6140783936415300229}
-  - component: {fileID: 8285151947210002525}
+  - component: {fileID: 6747478732983568641}
+  - component: {fileID: 4589312692800801651}
+  - component: {fileID: 8256386701291235751}
+  - component: {fileID: 5849818880867548354}
+  - component: {fileID: 2064484005217137505}
+  - component: {fileID: 8324984578203987824}
   m_Layer: 0
-  m_Name: MetalBall
-  m_TagString: MetalBall
+  m_Name: Pin
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5209143235560468072
+--- !u!4 &6747478732983568641
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4610981139289169744}
+  m_GameObject: {fileID: 8986482861373152357}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4366, y: 0.4366, z: 0.4366}
+  m_LocalPosition: {x: 0, y: 25, z: 0}
+  m_LocalScale: {x: 0.121, y: 0.19, z: 0.121}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4605994784846888616
+--- !u!33 &4589312692800801651
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4610981139289169744}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &8110632183419151912
+  m_GameObject: {fileID: 8986482861373152357}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &8256386701291235751
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4610981139289169744}
+  m_GameObject: {fileID: 8986482861373152357}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -88,14 +89,14 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6140783936415300229
-SphereCollider:
+--- !u!65 &5849818880867548354
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4610981139289169744}
-  m_Material: {fileID: 13400000, guid: 6da8e187b83f04db69e380cdd7e9e038, type: 2}
+  m_GameObject: {fileID: 8986482861373152357}
+  m_Material: {fileID: 13400000, guid: eb9480167197043359e7ddd690711098, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -107,17 +108,30 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Size: {x: 1, y: 2, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &8285151947210002525
+--- !u!114 &2064484005217137505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8986482861373152357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcb10cbdd94fc4e03958422afe23d22f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pinHitSound: {fileID: 0}
+--- !u!54 &8324984578203987824
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4610981139289169744}
+  m_GameObject: {fileID: 8986482861373152357}
   serializedVersion: 4
-  m_Mass: 5
+  m_Mass: 1.5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
