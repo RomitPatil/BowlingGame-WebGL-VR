@@ -5,6 +5,7 @@ public class ScoringUI : MonoBehaviour
 {
     public static ScoringUI Instance;
 
+    [SerializeField] private TextMeshProUGUI playerNameText;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI finalScoreText;
     [SerializeField] private GameObject finalScorePanel;
@@ -21,15 +22,22 @@ public class ScoringUI : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        playerNameText.text = $"{GameManager.Instance.userName}";
+        scoreText.text = $"{0}";
+    }
+
     public void UpdateScoreUI(int totalScore, string userName)
     {
-        scoreText.text = $"Player: {userName} | Score: {totalScore}";
+        playerNameText.text = $"{userName}";
+        scoreText.text = $"{totalScore}";
     }
 
     public void ShowFinalScore(int totalScore)
     {
         finalScorePanel.SetActive(true);
-        finalScoreText.text = $"Final Score: {totalScore}";
+        finalScoreText.text = $"{totalScore}";
     }
 
     public void HideFinalScore()

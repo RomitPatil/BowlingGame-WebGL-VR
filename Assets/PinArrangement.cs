@@ -4,8 +4,9 @@ public class PinArrangement : MonoBehaviour
 {
     public GameObject pinPrefab;  // Assign your pin prefab in Inspector
     public Transform pinParent;   // Assign "Pinset" (parent object) in Inspector
-    public float spacing = 30f;   // Distance between adjacent pins
-    public float yOffset = 0.0f;  // Adjust this in Inspector to tweak pin height
+    public float spacing = 1f;    // Distance between adjacent pins
+    public float yOffset = 0.0f;  // Height adjustment
+    public Vector3 pinScale = new Vector3(1f, 1f, 1f);  // Added pin scale control
     private int totalPins = 10;   // Total number of pins
 
     void Start()
@@ -15,33 +16,31 @@ public class PinArrangement : MonoBehaviour
 
     void ArrangePins()
     {
-        float rowSpacing = spacing * Mathf.Sqrt(3) / 2; // Vertical offset for rows
-        int pinCount = 0;
-
-        // Get the height of the pin to adjust its position correctly
+        float rowSpacing = spacing * 0.866f; // cos(30°) for proper triangular spacing
         float pinHeight = pinPrefab.GetComponent<Collider>().bounds.size.y;
-        float floorOffset = (pinHeight / 2) + yOffset; // Allows fine-tuning in Inspector
+        float floorOffset = (pinHeight / 2) + yOffset;
 
-        // Standard bowling pin arrangement (4 rows)
-        Vector3[,] pinPositions = new Vector3[4, 4] {
-            { new Vector3(0, 0, 0), Vector3.zero, Vector3.zero, Vector3.zero },
-            { new Vector3(-0.2f, 0, 0.3f), new Vector3(0.2f, 0, 0.3f), Vector3.zero, Vector3.zero },
-            { new Vector3(-0.4f, 0, 0.6f), new Vector3(0, 0, 0.6f), new Vector3(0.4f, 0, 0.6f), Vector3.zero },
-            { new Vector3(-0.6f, 0, 0.9f), new Vector3(-0.2f, 0, 0.9f), new Vector3(0.2f, 0, 0.9f), new Vector3(0.6f, 0, 0.9f) }
-        };
+        // Pin positions in a triangular formation (4 rows)
+        int[] pinsPerRow = { 1, 2, 3, 4 };
+        int currentPin = 0;
 
-        // Create all pins
-        for (int row = 0; row < 4; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (pinPositions[row, col] != Vector3.zero) {
-                    Vector3 position = pinParent.position + pinPositions[row, col];
-                    GameObject pin = Instantiate(pinPrefab, position, Quaternion.identity, pinParent);
+        // Start from back row (3) to front row (0)
+        for (int row = pinsPerRow.Length - 1; row >= 0; row--)
+        {
+            int pinsInThisRow = pinsPerRow[row];
+            float rowZ = row * rowSpacing;
+            
+            // Calculate starting X position to center the row
+            float startX = -(pinsInThisRow - 1) * spacing / 2;
 
-      
-                  
-
-                    pinCount++;
-                }
+            for (int pin = 0; pin < pinsInThisRow; pin++)
+            {
+                float xPos = startX + (pin * spacing);
+                Vector3 position = pinParent.position + new Vector3(xPos, floorOffset, rowZ);
+                
+                GameObject newPin = Instantiate(pinPrefab, position, Quaternion.identity, pinParent);
+                newPin.transform.localScale = pinScale;  // Apply scale to each pin
+                currentPin++;
             }
         }
     }

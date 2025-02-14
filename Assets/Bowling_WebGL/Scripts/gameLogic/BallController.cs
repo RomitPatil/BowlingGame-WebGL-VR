@@ -1,16 +1,32 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BallController : MonoBehaviour
 {
     [SerializeField] private GameObject metalBallPrefab, rubberBallPrefab;
     [SerializeField] private GameObject currentBall;
-    private Rigidbody rb;
-
-    [SerializeField] private float throwForce = 15f;
-    [SerializeField] private float spinForce = 2f; // Add some spin effect
-
      private AudioSource audioSource; 
- public AudioClip throwSound; // Assign in Inspector
+     public AudioClip throwSound; // Assign in Inspector
+
+     public List<Button> metalBallButtons;
+     public List<Button> rubberBallButtons;
+
+    void Start()
+    {
+        foreach (Button button in metalBallButtons)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(OnMetalBallSelect);
+        }
+
+        foreach (Button button in rubberBallButtons)    
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(OnRubberBallSelect);
+        }
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)){
@@ -19,11 +35,18 @@ public class BallController : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha2)){
             SpawnBall(rubberBallPrefab);
         }
-
-        if (currentBall != null && Input.GetKeyDown(KeyCode.Space)){
-            ThrowBall();
-        }
     }
+
+    public void OnMetalBallSelect( )
+    {
+        SpawnBall(metalBallPrefab);
+    }
+
+    public void OnRubberBallSelect( )
+    {
+        SpawnBall(rubberBallPrefab);
+    }
+    
 
     void SpawnBall(GameObject ballPrefab)
     {
@@ -31,20 +54,5 @@ public class BallController : MonoBehaviour
             Destroy(currentBall);
 
         currentBall = Instantiate(ballPrefab, transform.position, Quaternion.identity);
-        rb = currentBall.GetComponent<Rigidbody>();
     }
-
-    void ThrowBall()
-    {
-        if (rb != null)
-        {
-            rb.AddForce(transform.forward * throwForce, ForceMode.Impulse);
-            rb.AddTorque(Vector3.right * spinForce, ForceMode.Impulse); 
-            if (audioSource != null && throwSound != null)
-            {
-                audioSource.PlayOneShot(throwSound);
-            }
-        }
-    }
-    
 }

@@ -10,7 +10,7 @@ public class GameEndManager : MonoBehaviour
 
     private void Start()
     {
-        finalScoreText.text = $"Total Score: {ScoreManager.Instance.GetTotalScore()}";
+        finalScoreText.text = $"{ScoreManager.Instance.GetTotalScore()}";
         playAgainButton.onClick.AddListener(RestartGame);
     }
 

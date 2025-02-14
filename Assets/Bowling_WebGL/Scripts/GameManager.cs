@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
     private int totalScore = 0, currentRound = 1, maxRound = 5;
     private int metalBallCount = 3, rubberBallCount = 2;
     private GameObject currentBall;
-    private string userName;
+    public string userName;
 
     private void Awake()
     {
@@ -33,7 +33,7 @@ public class GameManager : MonoBehaviour
     {
         userName = PlayerPrefs.GetString("Username", "Player");
         Debug.Log($"Username loaded: {userName}");
-        scoreText.text = $"Player: {userName}";
+        scoreText.text = $"{0}";
         UpdateUI();
         SpawnBall();
     }
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
         int scorePerTouch = ballType == "MetalBall" ? 5 : 15;
 
         totalScore += isCollapsed ? scorePerCollapse : scorePerTouch;
-        scoreText.text = $"Score: {totalScore}";
+        scoreText.text = $"{totalScore}";
     }
 
     public void NextRound()
@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     void ShowFinalScore()
     {
         finalScorePanel.SetActive(true);
-        finalScoreText.text = $"Final Score: {totalScore}\nPlayer: {userName}";
+        finalScoreText.text = $"{totalScore}";
     }
 
     public void RestartGame()
