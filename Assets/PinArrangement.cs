@@ -2,15 +2,46 @@ using UnityEngine;
 
 public class PinArrangement : MonoBehaviour
 {
+    public static PinArrangement Instance;
+    
     public GameObject pinPrefab;  // Assign your pin prefab in Inspector
     public Transform pinParent;   // Assign "Pinset" (parent object) in Inspector
     public float spacing = 1f;    // Distance between adjacent pins
     public float yOffset = 0.0f;  // Height adjustment
     public Vector3 pinScale = new Vector3(1f, 1f, 1f);  // Added pin scale control
-    private int totalPins = 10;   // Total number of pins
+
+    private GameObject[] currentPins;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
+        ArrangePins();
+    }
+
+    public void ResetPins()
+    {
+        // Destroy existing pins
+        if (currentPins != null)
+        {
+            foreach (GameObject pin in currentPins)
+            {
+                if (pin != null)
+                    Destroy(pin);
+            }
+        }
+
+        // Create new pins
         ArrangePins();
     }
 
@@ -22,6 +53,7 @@ public class PinArrangement : MonoBehaviour
 
         // Pin positions in a triangular formation (4 rows)
         int[] pinsPerRow = { 1, 2, 3, 4 };
+        currentPins = new GameObject[10];
         int currentPin = 0;
 
         // Start from back row (3) to front row (0)
@@ -40,6 +72,7 @@ public class PinArrangement : MonoBehaviour
                 
                 GameObject newPin = Instantiate(pinPrefab, position, Quaternion.identity, pinParent);
                 newPin.transform.localScale = pinScale;  // Apply scale to each pin
+                currentPins[currentPin] = newPin;
                 currentPin++;
             }
         }

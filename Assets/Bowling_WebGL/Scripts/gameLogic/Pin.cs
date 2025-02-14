@@ -1,40 +1,69 @@
 using UnityEngine;
+using TMPro;
 
 public class Pin : MonoBehaviour
 {
     private bool isHit = false; // Prevents multiple triggers
-  private Rigidbody rb;
- private AudioSource audioSource; // Reference to AudioSource
+    private bool isCollapsed = false;
+    private bool isScored = false;  // Track if pin has been scored
+    private Rigidbody rb;
+    private AudioSource audioSource; // Reference to AudioSource
     public AudioClip pinHitSound; // Assign in Inspector
 
+    [SerializeField] private float collapseThreshold = 0.5f; // Adjust in inspector
 
-  void Start()
+    // UI popup prefab for showing score
+    [SerializeField] private GameObject scorePopupPrefab;
+    private Vector3 scoreOffset = new Vector3(0, 2f, 0); // Offset above pin
+
+    void Start()
     {
         rb = GetComponent<Rigidbody>();
+        audioSource = GetComponent<AudioSource>();
     }
-        void OnCollisionEnter(Collision collision)
+
+    void Update()
     {
-        // Ensure only the first hit is counted
+        // Check for collapse without direct hit
+        if (!isScored && transform.up.y < collapseThreshold)
+        {
+            isScored = true;
+            isCollapsed = true;
+            int score = GameManager.Instance.currentBallType == "MetalBall" ? 10 : 20;
+            ScoringUI.Instance.UpdatePinCollapsed();  // Update collapsed count
+            GameManager.Instance.UpdateScore(true);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
         if (isHit) return;
 
         if (collision.gameObject.CompareTag("MetalBall") || collision.gameObject.CompareTag("RubberBall"))
         {
-            isHit = true; // Mark as hit
+            isHit = true;
             
-            bool isCollapsed = transform.up.y < 0.5f; // Check if the pin has fallen
-            GameManager.Instance.UpdateScore(collision.gameObject.tag, isCollapsed);
-              if (audioSource != null && pinHitSound != null)
+            if (!isScored)  // Only score if not already scored from falling
+            {
+                int score = GameManager.Instance.currentBallType == "MetalBall" ? 5 : 15;
+                GameManager.Instance.UpdateScore(false);
+            }
+
+            if (audioSource != null && pinHitSound != null)
             {
                 audioSource.PlayOneShot(pinHitSound);
             }
         }
     }
 
-    void FixedUpdate()
+    private void ShowScorePopup(int score)
     {
-        if (rb.linearVelocity.magnitude > 0.1f && transform.up.y < 0.5f) // Detect if the pin has fallen
+        if (scorePopupPrefab != null)
         {
-            isHit = true;
+            Vector3 popupPosition = transform.position + scoreOffset;
+            GameObject popup = Instantiate(scorePopupPrefab, popupPosition, Quaternion.identity);
+            popup.GetComponent<TextMeshProUGUI>().text = $"+{score}";
+            Destroy(popup, 1f); // Destroy after 1 second
         }
     }
 }

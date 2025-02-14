@@ -12,6 +12,17 @@ public class BallMovementManager : MonoBehaviour
     [SerializeField] private float maxForce = 2000f;   // Maximum force to apply
     [SerializeField] private float minDragDistance = 50f;  // Minimum drag distance required to launch
 
+    [Header("Ball Boundaries")]
+    [SerializeField] private float minYPosition = -10f; // Height at which ball is destroyed
+    [SerializeField] private string wallTag = "Wall";  // Tag for walls that should end the round
+    [SerializeField] private float endRoundDelay = 2f; // Delay before ending round after wall hit
+    
+    [Header("Movement Detection")]
+    [SerializeField] private float minMovementSpeed = 0.1f;  // Minimum speed to consider ball moving
+    [SerializeField] private float stillDuration = 2f;       // How long ball needs to be still before ending round
+    private float stillTimer = 0f;
+    private bool isCheckingMovement = false;
+
     private float targetXPosition;
     [SerializeField] private bool isMouseOver = false;
     private Camera mainCamera;
@@ -23,6 +34,8 @@ public class BallMovementManager : MonoBehaviour
     [SerializeField] private bool isDragging = false;
     [SerializeField] private bool hasLaunched = false;
 
+    private BallController ballController;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,12 +43,27 @@ public class BallMovementManager : MonoBehaviour
         targetXPosition = transform.position.x;
         rb = GetComponent<Rigidbody>();
         rb.isKinematic = true; // Start with kinematic enabled
+        ballController = FindFirstObjectByType<BallController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (hasLaunched) return;
+        if (hasLaunched)
+        {
+            // Check if ball has fallen below minimum height
+            if (transform.position.y < minYPosition)
+            {
+                EndBall();
+                return;
+            }
+
+            // Check for stopped movement
+            if (rb != null && !rb.isKinematic)
+            {
+                CheckBallMovement();
+            }
+        }
 
         HandleSidewaysMovement();
         HandleDragging();
@@ -90,11 +118,39 @@ public class BallMovementManager : MonoBehaviour
         dragStartScreen = Input.mousePosition;
     }
 
+    private void CheckBallMovement()
+    {
+        float currentSpeed = rb.linearVelocity.magnitude;
+
+        if (currentSpeed < minMovementSpeed)
+        {
+            if (!isCheckingMovement)
+            {
+                isCheckingMovement = true;
+                stillTimer = 0f;
+            }
+            
+            stillTimer += Time.deltaTime;
+            
+            if (stillTimer >= stillDuration)
+            {
+                EndBall();
+            }
+        }
+        else
+        {
+            isCheckingMovement = false;
+            stillTimer = 0f;
+        }
+    }
+
     private void LaunchBall(Vector2 dragDelta)
     {
         isDragging = false;
         hasLaunched = true;
         canMove = false;
+        isCheckingMovement = false;  // Reset movement checking
+        stillTimer = 0f;
         
         // Convert screen direction to world direction (y becomes z)
         Vector3 dragDirection = new Vector3(dragDelta.x, 0, dragDelta.y);
@@ -136,6 +192,24 @@ public class BallMovementManager : MonoBehaviour
         rb.isKinematic = true;
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (hasLaunched && collision.gameObject.CompareTag(wallTag))
+        {
+            // End round after a short delay to let physics settle
+            Invoke("EndBall", endRoundDelay);
+        }
+    }
+
+    private void EndBall()
+    {
+        if (ballController != null)
+        {
+            ballController.EndRound();
+        }
+        Destroy(gameObject);
     }
 }
 
