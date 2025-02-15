@@ -36,6 +36,8 @@ public class BallMovementManager : MonoBehaviour
 
     private BallController ballController;
 
+    [SerializeField] private string foulTag = "Foul";  // Add tag for foul areas
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -149,21 +151,21 @@ public class BallMovementManager : MonoBehaviour
         isDragging = false;
         hasLaunched = true;
         canMove = false;
-        isCheckingMovement = false;  // Reset movement checking
+        isCheckingMovement = false;
         stillTimer = 0f;
         
-        // Convert screen direction to world direction (y becomes z)
         Vector3 dragDirection = new Vector3(dragDelta.x, 0, dragDelta.y);
         dragDirection = dragDirection.normalized;
         
-        // Calculate force based on drag distance
         float dragDistance = dragDelta.magnitude;
         float forceMagnitude = Mathf.Lerp(minForce, maxForce, dragDistance / 500f);
         forceMagnitude = Mathf.Clamp(forceMagnitude, minForce, maxForce);
         
-        // Enable physics and apply force
         rb.isKinematic = false;
         rb.AddForce(dragDirection * forceMagnitude, ForceMode.Impulse);
+
+        // Play launch sound
+        SoundManager.singleton.PlayBallLaunch();
     }
 
     private void OnMouseEnter()
@@ -210,6 +212,15 @@ public class BallMovementManager : MonoBehaviour
             ballController.EndRound();
         }
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(foulTag))
+        {
+            ScoringUI.Instance.ShowMessage($"Oops {GameManager.Instance.userName}!");
+            EndBall();
+        }
     }
 }
 

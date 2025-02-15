@@ -242,10 +242,16 @@ MonoBehaviour:
   minForce: 80
   maxForce: 450
   minDragDistance: 200
+  minYPosition: -10
+  wallTag: Wall
+  endRoundDelay: 2
+  minMovementSpeed: 0.1
+  stillDuration: 1
   isMouseOver: 0
   canMove: 1
   isDragging: 0
   hasLaunched: 0
+  foulTag: Foul
 --- !u!1 &6839235444463680454
 GameObject:
   m_ObjectHideFlags: 0

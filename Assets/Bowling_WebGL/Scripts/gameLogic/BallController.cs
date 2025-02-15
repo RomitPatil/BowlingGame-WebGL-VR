@@ -17,6 +17,22 @@ public class BallController : MonoBehaviour
     void Start()
     {
         ResetButtons();
+        
+        // Auto-select first metal ball after a short delay
+        if (metalBallButtons != null && metalBallButtons.Count > 0)
+        {
+            // Small delay to ensure everything is initialized
+            Invoke("AutoSelectFirstMetalBall", 0.1f);
+        }
+    }
+
+    private void AutoSelectFirstMetalBall()
+    {
+        Button firstMetalButton = metalBallButtons[0];
+        if (firstMetalButton != null && firstMetalButton.interactable)
+        {
+            OnMetalBallSelect(firstMetalButton);
+        }
     }
 
     private void ResetButtons()
@@ -83,6 +99,8 @@ public class BallController : MonoBehaviour
         {
             Destroy(currentBall);
         }
+
+        Pin.CheckEndRound();  // Check if any pins were hit before ending round
 
         // Only end game after last ball completes its round
         if (isLastBall)
