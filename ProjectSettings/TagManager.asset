@@ -6,6 +6,7 @@ TagManager:
   tags:
   - MetalBall
   - RubberBall
+  - Wall
   layers:
   - Default
   - TransparentFX
