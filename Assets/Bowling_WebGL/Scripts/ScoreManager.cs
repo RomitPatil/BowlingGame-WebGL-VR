@@ -5,7 +5,7 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance { get; private set; }
 
-    public event Action OnScoreChange;
+   // public event Action OnScoreChange;
 
     [SerializeField]
     private int totalScore;
@@ -28,7 +28,7 @@ public class ScoreManager : MonoBehaviour
     public void UpdateScore(int points){
         roundScore += points;
         totalScore += points;
-        OnScoreChange?.Invoke();
+       // OnScoreChange?.Invoke();
     }
 
     public int GetRoundScore() => roundScore;

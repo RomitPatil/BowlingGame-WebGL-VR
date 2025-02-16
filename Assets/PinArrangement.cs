@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PinArrangement : MonoBehaviour
 {
@@ -71,10 +72,32 @@ public class PinArrangement : MonoBehaviour
                 Vector3 position = pinParent.position + new Vector3(xPos, floorOffset, rowZ);
                 
                 GameObject newPin = Instantiate(pinPrefab, position, Quaternion.identity, pinParent);
-                newPin.transform.localScale = pinScale;  // Apply scale to each pin
+                newPin.transform.localScale = pinScale;
+                
+                // Ensure the Rigidbody is properly initialized
+                Rigidbody rb = newPin.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                    rb.isKinematic = true; // Temporarily make kinematic
+                    StartCoroutine(EnablePhysics(rb));
+                }
+                
                 currentPins[currentPin] = newPin;
                 currentPin++;
             }
+        }
+    }
+
+    private IEnumerator EnablePhysics(Rigidbody rb)
+    {
+        yield return new WaitForFixedUpdate();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
         }
     }
 }

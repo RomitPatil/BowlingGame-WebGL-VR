@@ -9,33 +9,20 @@ public class ScoringUI : MonoBehaviour
 {
     public static ScoringUI Instance;
 
-    [SerializeField] private TextMeshProUGUI playerNameText;
-    [SerializeField] private TextMeshProUGUI scoreText;
-    [SerializeField] private TextMeshProUGUI totalScoreText;
-    [SerializeField] private TextMeshProUGUI pinCollapsedText;
-    [SerializeField] private GameObject finalScorePanel;
+    [SerializeField] private TextMeshProUGUI playerNameText, scoreText, totalScoreText, BallTypeText, pinCollapsedText, messageText;
+    [SerializeField] private GameObject finalScorePanel, scoreRecordPrefab, messageObject;    // scoreRecordPrefab: Prefab for each score record row
 
-    [SerializeField] private TextMeshProUGUI BallTypeText;
-
-    [SerializeField] private Transform scoreRecordContainer;  // Parent object for score records
-    [SerializeField] private GameObject scoreRecordPrefab;    // Prefab for each score record row
-
-    [SerializeField] private GameObject messageObject;    // Parent GameObject containing messageText
-    [SerializeField] private TextMeshProUGUI messageText;
-    [SerializeField] private float messageDisplayTime = 3f;
     private Coroutine messageCoroutine;
 
+
     [Header("Message Animation")]
-    [SerializeField] private float fadeInDuration = 0.5f;
-    [SerializeField] private float fadeOutDuration = 0.5f;
-    [SerializeField] private float scaleUpDuration = 0.5f;
+    [SerializeField] private float messageDisplayTime = 3f, fadeInDuration = 0.5f, fadeOutDuration = 0.5f, panelFadeInDuration = 0.5f, scaleUpDuration = 0.5f, panelScaleUpDuration = 0.5f;
     [SerializeField] private Vector3 startScale = Vector3.zero;
     [SerializeField] private Vector3 endScale = Vector3.one;
 
     [Header("Final Score Panel Animation")]
-    [SerializeField] private float panelFadeInDuration = 0.5f;
-    [SerializeField] private float panelScaleUpDuration = 0.5f;
     [SerializeField] private Vector3 panelStartScale = Vector3.zero;
+    [SerializeField] private Transform scoreRecordContainer;  // Parent object for score records
     [SerializeField] private Vector3 panelEndScale = Vector3.one;
     private CanvasGroup finalScorePanelGroup;
     private int pinsCollapsedCount = 0;

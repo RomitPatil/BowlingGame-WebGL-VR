@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class Pin : MonoBehaviour
 {
@@ -27,12 +28,30 @@ public class Pin : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         audioSource = GetComponent<AudioSource>();
-        startPosition = transform.position;  // Store initial position
+        
+        // Wait a frame before setting the start position to ensure proper physics initialization
+        StartCoroutine(InitializePin());
+    }
+
+    private IEnumerator InitializePin()
+    {
+        yield return new WaitForFixedUpdate();
+        
+        startPosition = transform.position;
+        
+        // Reset the pin's physics state
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+        
         if (!isHit)
         {
             totalPinsCollapsed = 0;
-            anyPinHit = false;  // Reset hit tracking for new round
-            roundEndMessage = "";  // Reset message at start
+            anyPinHit = false;
+            roundEndMessage = "";
+            Debug.Log($"Pin initialized at position: {startPosition}");
         }
     }
 
@@ -48,6 +67,8 @@ public class Pin : MonoBehaviour
                 isScored = true;
                 isCollapsed = true;
                 totalPinsCollapsed++;
+                
+                Debug.Log($"Pin collapsed! Angle: {transform.up.y}, Height: {transform.position.y}. Total pins collapsed: {totalPinsCollapsed}");
                 
                 // Play pin sound
                 SoundManager.singleton.PlayPinSound();
@@ -78,6 +99,8 @@ public class Pin : MonoBehaviour
             isHit = true;
             anyPinHit = true;
             
+            Debug.Log($"Pin hit by {collision.gameObject.tag} at velocity: {collision.relativeVelocity.magnitude}");
+            
             if (!isScored)
             {
                 int score = GameManager.Instance.currentBallType == "MetalBall" ? 5 : 15;
@@ -102,6 +125,8 @@ public class Pin : MonoBehaviour
 
     public static void CheckEndRound()
     {
+        Debug.Log($"Checking end round. Any pins hit: {anyPinHit}, Total pins collapsed: {totalPinsCollapsed}");
+        
         if (!anyPinHit)
         {
             roundEndMessage = $"Oops {GameManager.Instance.userName}!";
@@ -110,6 +135,7 @@ public class Pin : MonoBehaviour
         // Show stored message at end of round
         if (!string.IsNullOrEmpty(roundEndMessage))
         {
+            Debug.Log($"End round message: {roundEndMessage}");
             ScoringUI.Instance.ShowMessage(roundEndMessage);
         }
     }
